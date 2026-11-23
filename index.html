@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NotesHub Raisoni</title>
+<script src="pdf.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f5f1;--card:#fff;--ink:#17372b;--mute:#6b736e;--green:#216149;--tint:#e8efe9;--peach:#fbe3d6;--peachi:#a4552c;--line:#e3e5df}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121815;--card:#1b2420;--ink:#e6efe9;--mute:#98a39c;--green:#3f9d78;--tint:#25332c;--peach:#3a2a22;--peachi:#f0a37c;--line:#2a352f}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:19px}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--green);display:grid;place-items:center;color:#fff}
+.pill{background:var(--tint);border:0;color:var(--ink);padding:11px 16px;border-radius:20px;font-weight:600;font-size:15px}
+.eyebrow{margin:30px 0 8px;letter-spacing:.14em;font-size:13px;font-weight:700;color:var(--green)}
+h1{font-size:40px;line-height:1.1;margin:0 0 14px;letter-spacing:-.02em}
+.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 22px}
+.search{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:0 18px;height:58px}
+.search input{border:0;outline:0;background:none;color:var(--ink);font-size:17px;flex:1;min-width:0}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:30px 0 14px}
+.sec h2{margin:0;font-size:25px}.sec span,.sec button{color:var(--mute);font-size:15px;background:none;border:0}
+.sec button{color:var(--green);font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sub{background:var(--card);border:1.5px solid var(--line);border-radius:24px;padding:16px;text-align:left;color:var(--ink);font:inherit}
+.sub.on{background:var(--tint);border-color:var(--green)}
+.ic{width:46px;height:46px;border-radius:14px;background:var(--tint);display:grid;place-items:center;color:var(--green);margin-bottom:22px}
+.sub.on .ic{background:var(--green);color:#fff}
+.sub b{font-size:21px;display:block}.sub small{color:var(--mute);font-size:15px;display:block;margin:3px 0 14px}
+.sub em{font-style:normal;color:var(--green);font-weight:600;font-size:15px}
+.note{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px;margin-bottom:12px}
+.nf{width:54px;height:54px;border-radius:16px;background:var(--peach);color:var(--peachi);display:grid;place-items:center;flex:none}
+.nm{flex:1;min-width:0}.nm b{font-size:19px;display:block}.nm small{color:var(--mute);font-size:14px;display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl{width:48px;height:48px;border-radius:14px;background:var(--tint);color:var(--green);display:grid;place-items:center;flex:none;text-decoration:none}
+.cta{position:sticky;bottom:12px;display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--green);color:#fff;border:0;border-radius:24px;height:60px;padding:0 22px;font-size:19px;font-weight:700;margin-top:18px}
+.foot{text-align:center;color:var(--mute);font-size:14px;margin-top:18px}
+.empty{color:var(--mute);text-align:center;padding:24px 0}
+label{display:block;font-weight:700;margin:24px 0 10px;font-size:17px}
+.in{width:100%;height:58px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 18px;font-size:17px;outline:0}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:14px 18px;font-size:17px;font-weight:600}
+.chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+.pick{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;width:100%;color:var(--ink);font:inherit;text-align:left}
+.hint{color:var(--mute);font-size:15px;margin:16px 0}
+.cta[disabled]{opacity:.45}
+.back{background:none;border:0;color:var(--ink);padding:6px}
+.hdr{display:flex;align-items:center;gap:12px;justify-content:center;position:relative;font-weight:700;font-size:19px}
+.hdr .back{position:absolute;left:0}
+.msg{background:var(--tint);border-radius:16px;padding:12px 14px;margin-top:14px;font-size:15px}
+.viewer{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}.vbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px}.vbar b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vbody{flex:1;overflow:auto;padding:8px;text-align:center}.vbody canvas{display:block;margin:0 auto 10px;box-shadow:0 1px 6px #0003;background:#fff}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const SUBJECTS=[
+ {id:"DSA",sub:"Data structures",ic:'<path d="M8 7 3 12l5 5M16 7l5 5-5 5"/>'},
+ {id:"DLD",sub:"Digital logic",ic:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>'},
+ {id:"Python",sub:"Python",ic:'<path d="m5 7 5 5-5 5M12 18h7"/>'},
+ {id:"Linear Network",sub:"Linear Network",ic:'<circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="m8.6 10.6 6.8-3.2M8.6 13.4l6.8 3.2"/>'}
+];
+const svg=(p,s=24)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const FILE='<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>';
+const DOWN='<path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=document.getElementById("app");
+let notes=[],db=null,assets=null,view="home",subj=null,q="",showAll=false,status="Connecting…",form={title:"",name:"",subject:"DSA",file:null,busy:false,err:""};
+
+function size(b){return b>1048576?(b/1048576).toFixed(1)+" MB":Math.max(1,Math.round(b/1024))+" KB"}
+function list(){
+ let l=notes.slice();
+ if(subj&&!q)l=l.filter(n=>n.subject===subj);
+ if(q){const k=q.toLowerCase();l=l.filter(n=>[n.title,n.fileName,n.author,n.subject].join(" ").toLowerCase().includes(k))}
+ return l;
+}
+const count=id=>notes.filter(n=>n.subject===id).length;
+function noteHTML(n){
+ return `<div class="note"><div class="nf">${svg(FILE,26)}</div><div class="nm"><b>${esc(n.title)}</b><small>${esc(n.subject)} · ${esc(n.author||"Anonymous")} · ${size(n.size||0)}</small><small>${esc(n.fileName||"")}</small></div><button class="dl" style="border:0" onclick="openNote(${n.id})" aria-label="View PDF">${svg(DOWN)}</button><button class="dl" style="border:0;background:var(--peach);color:var(--peachi)" onclick="delNote(${n.id})" aria-label="Delete">${svg('<path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13"/>',22)}</button></div>`;
+}
+function home(){
+ const l=list(),shown=(subj||q||showAll)?l:l.slice(0,5);
+ const head=q?"Search results":subj?subj+" notes":"Recent notes";
+ $.innerHTML=`
+ <div class="top"><div class="brand"><div class="logo">${svg('<path d="M2 5a1 1 0 0 1 1-1h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H3zM22 5a1 1 0 0 0-1-1h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h8z"/>',24)}</div>NotesHub Raisoni</div><button class="pill" onclick="subj=null;q='';showAll=true;home()">Shared</button></div>
+ <div class="eyebrow">YOUR CLASSMATES’ LIBRARY</div>
+ <h1>Study notes, shared simply.</h1>
+ <p class="lead">Find the PDF you need, or share notes with your class.</p>
+ <div class="search">${svg('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',22)}<input id="q" placeholder="Search notes or files" value="${esc(q)}"></div>
+ <div class="sec"><h2>Subjects</h2><span>${SUBJECTS.length} sections</span></div>
+ <div class="grid">${SUBJECTS.map(s=>`<button class="sub ${subj===s.id?"on":""}" data-s="${esc(s.id)}"><div class="ic">${svg(s.ic)}</div><b>${s.id}</b><small>${s.sub}</small><em>${count(s.id)} note${count(s.id)===1?"":"s"}</em></button>`).join("")}</div>
+ <div class="sec"><h2>${head}</h2>${subj||q?`<button onclick="subj=null;q='';home()">Show all</button>`:`<span>${notes.length} shared</span>`}</div>
+ ${shown.length?shown.map(noteHTML).join(""):`<div class="empty">${db?"No notes yet. Tap “Share a PDF note” to add one.":esc(status)}</div>`}
+ <button class="cta" id="share"><span style="display:flex;gap:12px;align-items:center">${svg('<path d="M12 5v14M5 12h14"/>')}Share a PDF note</span>${svg('<path d="M7 17 17 7M8 7h9v9"/>',20)}</button>
+ <div class="foot">Class notes shared by students, for students.</div>`;
+ const qi=document.getElementById("q");
+ qi.oninput=e=>{q=e.target.value;const pos=q.length;home();const n=document.getElementById("q");n.focus();n.setSelectionRange(pos,pos)};
+ $.querySelectorAll(".sub").forEach(b=>b.onclick=()=>{subj=subj===b.dataset.s?null:b.dataset.s;q="";home()});
+ document.getElementById("share").onclick=()=>{view="share";shareView()};
+}
+function shareView(){
+ const f=form;
+ $.innerHTML=`
+ <div class="hdr"><button class="back" id="bk">${svg('<path d="M19 12H5m6-6-6 6 6 6"/>')}</button>Share a note</div>
+ <h1 style="margin-top:26px;font-size:36px">Add to the library</h1>
+ <p class="lead">Your PDF is saved inside this app on your phone.</p>
+ <label>Note title</label><input class="in" id="t" placeholder="e.g. Binary trees — revision" value="${esc(f.title)}">
+ <label>Your name (optional)</label><input class="in" id="n" placeholder="Shown with your shared note" value="${esc(f.name)}">
+ <label>Subject</label><div class="chips">${SUBJECTS.map(s=>`<button class="chip ${f.subject===s.id?"on":""}" data-s="${esc(s.id)}">${s.id}</button>`).join("")}</div>
+ <label>PDF file</label>
+ <button class="pick" id="pk"><div class="nf">${svg('<path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',26)}</div><div class="nm"><b>${f.file?esc(f.file.name):"Choose a PDF"}</b><small>${f.file?size(f.file.size):"PDF only · up to 20 MB"}</small></div></button>
+ <input type="file" id="fi" accept="application/pdf,.pdf" hidden>
+ <p class="hint">Only PDF files are accepted. Please share class notes you have permission to distribute.</p>
+ ${f.err?`<div class="msg">${esc(f.err)}</div>`:""}
+ <button class="cta" id="go" style="justify-content:center;gap:12px" ${f.file&&f.title.trim()&&!f.busy&&assets&&db?"":"disabled"}>${f.busy?"Uploading…":"Share with everyone"}</button>`;
+ const t=document.getElementById("t"),n=document.getElementById("n"),fi=document.getElementById("fi");
+ const upd=()=>{document.getElementById("go").disabled=!(f.file&&f.title.trim()&&!f.busy&&assets&&db)};
+ t.oninput=e=>{f.title=e.target.value;upd()};n.oninput=e=>f.name=e.target.value;
+ $.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{f.subject=b.dataset.s;shareView()});
+ document.getElementById("bk").onclick=()=>{view="home";home()};
+ document.getElementById("pk").onclick=()=>fi.click();
+ fi.onchange=()=>{const x=fi.files[0];f.err="";if(!x)return;
+  if(!(x.type==="application/pdf"||/\.pdf$/i.test(x.name))){f.err="Only PDF files are accepted.";f.file=null}
+  else if(x.size>20*1048576){f.err="File is larger than 20 MB.";f.file=null}
+  else{f.file=x;if(!f.title.trim())f.title=x.name.replace(/\.pdf$/i,"")}
+  shareView()};
+ document.getElementById("go").onclick=async()=>{
+  f.busy=true;f.err="";shareView();
+  try{
+   const buf=await f.file.arrayBuffer();
+   await idb("readwrite",st=>st.add({title:f.title.trim(),author:f.name.trim(),subject:f.subject,fileName:f.file.name,size:f.file.size,createdAt:Date.now(),data:buf}));
+   await load();
+   form={title:"",name:f.name,subject:f.subject,file:null,busy:false,err:""};view="home";home();
+  }catch(e){f.busy=false;f.err="Could not upload: "+((e&&e.message)||"please try again.");shareView()}
+ };
+}
+home();
+let _db;
+function open(){return _db||(_db=new Promise((res,rej)=>{const r=indexedDB.open("noteshub",1);r.onupgradeneeded=()=>r.result.createObjectStore("notes",{keyPath:"id",autoIncrement:true});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))}
+async function idb(mode,fn){const d=await open();return new Promise((res,rej)=>{const t=d.transaction("notes",mode);const rq=fn(t.objectStore("notes"));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)})}
+async function load(){
+ const all=await idb("readonly",st=>st.getAll());
+ notes=(all||[]).sort((x,y)=>y.createdAt-x.createdAt);
+ if(view==="home"&&document.activeElement.id!=="q")home();
+}
+async function openNote(id){
+ const n=await idb("readonly",st=>st.get(id));if(!n)return;
+ const v=document.createElement("div");v.className="viewer";
+ v.innerHTML='<div class="vbar"><b>'+esc(n.title)+'</b><button class="pill" id="vc">Close</button></div><div class="vbody" id="vb"><div class="empty">Loading…</div></div>';
+ document.body.appendChild(v);document.getElementById("vc").onclick=()=>v.remove();
+ try{
+  pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:new Uint8Array(n.data.slice(0))}).promise;
+  const vb=document.getElementById("vb");vb.innerHTML="";
+  const w=vb.clientWidth-16,dpr=window.devicePixelRatio||1;
+  for(let i=1;i<=pdf.numPages;i++){
+   const pg=await pdf.getPage(i),b=pg.getViewport({scale:1}),sc=w/b.width,vp=pg.getViewport({scale:sc*dpr});
+   const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;c.style.width=w+"px";c.style.height=(vp.height/dpr)+"px";
+   vb.appendChild(c);await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+  }
+ }catch(e){document.getElementById("vb").innerHTML='<div class="empty">Could not open this PDF.</div>'}
+}
+async function delNote(id){if(confirm("Delete this note from this phone?")){await idb("readwrite",st=>st.delete(id));load()}}
+(async()=>{try{db=assets=true;await load()}catch(e){status="Storage unavailable.";home()}})();
+</script>
+</body>
+</html>
